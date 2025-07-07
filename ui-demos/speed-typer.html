@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Customer Support</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .form-input.warning {
+            border-color: #ffc107;
+            background: #fffbf0;
+        }
+        .form-input.error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+        .form-input.success {
+            border-color: #28a745;
+            background: #f8fff8;
+        }
+        .speed-indicator {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 8px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .speed-bar {
+            height: 100%;
+            background: #007bff;
+            transition: width 0.1s ease;
+            width: 0%;
+        }
+        .speed-zones {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+        }
+        .speed-zone {
+            flex: 1;
+            height: 100%;
+        }
+        .speed-zone.slow {
+            background: rgba(220, 53, 69, 0.2);
+        }
+        .speed-zone.perfect {
+            background: rgba(40, 167, 69, 0.2);
+        }
+        .speed-zone.fast {
+            background: rgba(220, 53, 69, 0.2);
+        }
+        .speed-feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            min-height: 16px;
+            color: #666;
+        }
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .security-status {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .security-status.checking {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .security-status.verified {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .security-status.failed {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .security-icon {
+            margin-right: 8px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        .typing-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Contact Customer Support</h1>
+        
+        <div class="instructions">
+            <h3>Advanced Anti-Bot Verification</h3>
+            <p>Our system uses typing rhythm analysis to prevent automated spam. Please type at a natural, consistent pace in the message field below.</p>
+        </div>
+        
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" class="form-input" rows="6" required placeholder="Please describe your issue or question..."></textarea>
+                
+                <div class="speed-indicator">
+                    <div class="speed-zones">
+                        <div class="speed-zone slow"></div>
+                        <div class="speed-zone perfect"></div>
+                        <div class="speed-zone fast"></div>
+                    </div>
+                    <div class="speed-bar" id="speedBar"></div>
+                </div>
+                
+                <div class="speed-feedback" id="speedFeedback">Type at a natural pace to verify you're human</div>
+                
+                <div class="typing-stats">
+                    <span>WPM: <span id="wpmDisplay">0</span></span>
+                    <span>Consistency: <span id="consistencyDisplay">0%</span></span>
+                    <span>Human Score: <span id="humanScoreDisplay">0%</span></span>
+                </div>
+                
+                <div class="security-status checking" id="securityStatus">
+                    <span class="security-icon">🔍</span>
+                    <span>Analyzing typing pattern...</span>
+                </div>
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                Please complete the anti-bot verification by typing naturally.
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+        </form>
+    </div>
+
+    <script>
+        let typingData = [];
+        let lastKeystroke = 0;
+        let isTyping = false;
+        let wpmHistory = [];
+        let deleteTimeout;
+        let verificationPassed = false;
+        
+        const messageInput = document.getElementById('message');
+        const speedBar = document.getElementById('speedBar');
+        const speedFeedback = document.getElementById('speedFeedback');
+        const securityStatus = document.getElementById('securityStatus');
+        const wpmDisplay = document.getElementById('wpmDisplay');
+        const consistencyDisplay = document.getElementById('consistencyDisplay');
+        const humanScoreDisplay = document.getElementById('humanScoreDisplay');
+        const contactForm = document.getElementById('contactForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Target WPM range for "natural" typing
+        const MIN_WPM = 25;
+        const MAX_WPM = 60;
+        const TARGET_WPM = 35;
+        
+        messageInput.addEventListener('input', handleTyping);
+        messageInput.addEventListener('keydown', recordKeystroke);
+        contactForm.addEventListener('submit', handleSubmit);
+        
+        function recordKeystroke(e) {
+            const now = Date.now();
+            if (lastKeystroke > 0) {
+                const interval = now - lastKeystroke;
+                typingData.push(interval);
+                
+                // Keep only recent data
+                if (typingData.length > 20) {
+                    typingData.shift();
+                }
+            }
+            lastKeystroke = now;
+            isTyping = true;
+            
+            // Clear existing timeout
+            if (deleteTimeout) {
+                clearTimeout(deleteTimeout);
+            }
+            
+            // Set new timeout to stop typing detection
+            deleteTimeout = setTimeout(() => {
+                isTyping = false;
+            }, 1000);
+        }
+        
+        function handleTyping(e) {
+            if (typingData.length < 5) return;
+            
+            const currentWPM = calculateWPM();
+            const consistency = calculateConsistency();
+            const humanScore = calculateHumanScore(currentWPM, consistency);
+            
+            updateDisplay(currentWPM, consistency, humanScore);
+            
+            // Check if typing is in acceptable range
+            if (currentWPM < MIN_WPM - 5) {
+                showTypingError('Too slow! Please type faster to verify you are human.');
+                messageInput.classList.add('error');
+                messageInput.classList.remove('success', 'warning');
+                
+                // Delete some characters if too slow
+                if (Math.random() < 0.3) {
+                    setTimeout(() => {
+                        const currentValue = messageInput.value;
+                        if (currentValue.length > 0) {
+                            messageInput.value = currentValue.slice(0, -1);
+                        }
+                    }, 100);
+                }
+                
+            } else if (currentWPM > MAX_WPM + 10) {
+                showTypingError('Too fast! Please slow down to verify you are human.');
+                messageInput.classList.add('error');
+                messageInput.classList.remove('success', 'warning');
+                
+                // Delete characters if too fast
+                if (Math.random() < 0.5) {
+                    setTimeout(() => {
+                        const currentValue = messageInput.value;
+                        if (currentValue.length > 2) {
+                            messageInput.value = currentValue.slice(0, -2);
+                        }
+                    }, 100);
+                }
+                
+            } else if (currentWPM < MIN_WPM || currentWPM > MAX_WPM) {
+                showTypingWarning('Typing speed outside natural range. Please adjust pace.');
+                messageInput.classList.add('warning');
+                messageInput.classList.remove('success', 'error');
+                
+            } else if (consistency < 60) {
+                showTypingWarning('Inconsistent typing rhythm detected. Please type more naturally.');
+                messageInput.classList.add('warning');
+                messageInput.classList.remove('success', 'error');
+                
+            } else {
+                showTypingSuccess('Natural typing pattern verified!');
+                messageInput.classList.add('success');
+                messageInput.classList.remove('warning', 'error');
+                verificationPassed = true;
+            }
+        }
+        
+        function calculateWPM() {
+            if (typingData.length < 5) return 0;
+            
+            const recentData = typingData.slice(-10);
+            const averageInterval = recentData.reduce((sum, interval) => sum + interval, 0) / recentData.length;
+            
+            // Convert to WPM (assuming 5 characters per word)
+            const wpm = (60000 / averageInterval) / 5;
+            
+            wpmHistory.push(wpm);
+            if (wpmHistory.length > 10) {
+                wpmHistory.shift();
+            }
+            
+            return Math.round(wpm);
+        }
+        
+        function calculateConsistency() {
+            if (typingData.length < 5) return 0;
+            
+            const recentData = typingData.slice(-10);
+            const avg = recentData.reduce((sum, interval) => sum + interval, 0) / recentData.length;
+            const variance = recentData.reduce((sum, interval) => sum + Math.pow(interval - avg, 2), 0) / recentData.length;
+            const stdDev = Math.sqrt(variance);
+            
+            // Lower standard deviation = higher consistency
+            const consistency = Math.max(0, 100 - (stdDev / avg * 100));
+            return Math.round(consistency);
+        }
+        
+        function calculateHumanScore(wpm, consistency) {
+            let score = 0;
+            
+            // WPM score (bell curve around target)
+            const wpmDistance = Math.abs(wpm - TARGET_WPM);
+            const wpmScore = Math.max(0, 100 - (wpmDistance * 3));
+            
+            // Consistency score
+            const consistencyScore = consistency;
+            
+            // Irregularity bonus (humans aren't perfectly consistent)
+            const irregularityBonus = consistency > 90 ? -20 : 0;
+            
+            score = (wpmScore * 0.6 + consistencyScore * 0.4 + irregularityBonus);
+            return Math.max(0, Math.min(100, Math.round(score)));
+        }
+        
+        function updateDisplay(wpm, consistency, humanScore) {
+            wpmDisplay.textContent = wpm;
+            consistencyDisplay.textContent = consistency + '%';
+            humanScoreDisplay.textContent = humanScore + '%';
+            
+            // Update speed bar
+            const speedPercentage = Math.min(100, (wpm / MAX_WPM) * 100);
+            speedBar.style.width = speedPercentage + '%';
+            
+            // Update speed bar color
+            if (wpm < MIN_WPM || wpm > MAX_WPM) {
+                speedBar.style.background = '#dc3545';
+            } else if (wpm < MIN_WPM + 5 || wpm > MAX_WPM - 5) {
+                speedBar.style.background = '#ffc107';
+            } else {
+                speedBar.style.background = '#28a745';
+            }
+        }
+        
+        function showTypingError(message) {
+            speedFeedback.textContent = message;
+            speedFeedback.style.color = '#dc3545';
+            
+            securityStatus.className = 'security-status failed';
+            securityStatus.innerHTML = '<span class="security-icon">❌</span><span>Bot-like behavior detected</span>';
+            verificationPassed = false;
+        }
+        
+        function showTypingWarning(message) {
+            speedFeedback.textContent = message;
+            speedFeedback.style.color = '#856404';
+            
+            securityStatus.className = 'security-status checking';
+            securityStatus.innerHTML = '<span class="security-icon">⚠️</span><span>Verifying human pattern...</span>';
+            verificationPassed = false;
+        }
+        
+        function showTypingSuccess(message) {
+            speedFeedback.textContent = message;
+            speedFeedback.style.color = '#28a745';
+            
+            securityStatus.className = 'security-status verified';
+            securityStatus.innerHTML = '<span class="security-icon">✅</span><span>Human verification complete</span>';
+            verificationPassed = true;
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (!verificationPassed) {
+                showError('Please complete the anti-bot verification by typing naturally in the message field.');
+                return;
+            }
+            
+            if (messageInput.value.trim().length < 10) {
+                showError('Please provide a more detailed message (minimum 10 characters).');
+                return;
+            }
+            
+            // Validate other fields
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            
+            if (!name || !email || !subject) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+            
+            const finalWPM = wpmHistory.length > 0 ? wpmHistory[wpmHistory.length - 1] : 0;
+            const finalConsistency = calculateConsistency();
+            
+            alert(`Message sent successfully!\nName: ${name}\nSubject: ${subject}\nAnti-Bot Verification Passed:\n- Final WPM: ${finalWPM}\n- Consistency: ${finalConsistency}%\n- Human Score: ${calculateHumanScore(finalWPM, finalConsistency)}%\n\nThank you for typing naturally to verify you are human!`);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 
