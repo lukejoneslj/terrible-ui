@@ -32,6 +32,9 @@ Rating system with voice sentiment analysis.
 ### 📧 Newsletter Subscription
 Email input with advanced gesture recognition.
 
+### 📞 Customer Support Contact
+Professional contact form with anti-bot verification using typing rhythm analysis.
+
 ## Usage
 
 1. Clone the repository
