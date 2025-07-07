@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter Subscription</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .gesture-area {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+            position: relative;
+            margin: 15px 0;
+            cursor: crosshair;
+        }
+        .gesture-area.active {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        .email-display {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 15px 0;
+            min-height: 25px;
+            color: #495057;
+        }
+        .recognition-feedback {
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 10px 5px;
+        }
+        .trail {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #007bff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fadeOut 2s ease-out forwards;
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(0); }
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Newsletter Subscription</h1>
+        
+        <div class="instructions">
+            <h3>Advanced Gesture Recognition</h3>
+            <p>Our system uses cutting-edge gesture recognition. Trace each letter of your email address in the air using mouse movements.</p>
+        </div>
+        
+        <form id="subscriptionForm">
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #555;">Email Address</label>
+                <div class="gesture-area" id="gestureArea">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #6c757d; pointer-events: none;">
+                        <strong>Trace letters in the air</strong><br>
+                        <small>Move your mouse to draw each character</small>
+                    </div>
+                </div>
+                
+                <div class="email-display" id="emailDisplay">Start tracing your email...</div>
+                <div class="recognition-feedback" id="recognitionFeedback">Ready for gesture input</div>
+                
+                <button type="button" class="clear-btn" onclick="clearLetter()">Clear Letter</button>
+                <button type="button" class="clear-btn" onclick="clearAll()">Clear All</button>
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                Please trace a valid email address to continue.
+            </div>
+            
+            <button type="submit" class="submit-btn">Subscribe to Newsletter</button>
+        </form>
+    </div>
+
+    <script>
+        let currentPath = [];
+        let recognizedEmail = '';
+        let isTracing = false;
+        
+        const gestureArea = document.getElementById('gestureArea');
+        const emailDisplay = document.getElementById('emailDisplay');
+        const recognitionFeedback = document.getElementById('recognitionFeedback');
+        const subscriptionForm = document.getElementById('subscriptionForm');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        gestureArea.addEventListener('mousedown', startTracing);
+        gestureArea.addEventListener('mousemove', trace);
+        gestureArea.addEventListener('mouseup', stopTracing);
+        gestureArea.addEventListener('mouseleave', stopTracing);
+        subscriptionForm.addEventListener('submit', handleSubmit);
+        
+        function startTracing(e) {
+            isTracing = true;
+            gestureArea.classList.add('active');
+            currentPath = [];
+            
+            const rect = gestureArea.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            currentPath.push({x, y});
+            
+            recognitionFeedback.textContent = 'Tracing... release to recognize letter';
+        }
+        
+        function trace(e) {
+            if (!isTracing) return;
+            
+            const rect = gestureArea.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            currentPath.push({x, y});
+            
+            // Create trail effect
+            const trail = document.createElement('div');
+            trail.className = 'trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            gestureArea.appendChild(trail);
+            
+            setTimeout(() => {
+                if (trail.parentNode) trail.parentNode.removeChild(trail);
+            }, 2000);
+        }
+        
+        function stopTracing() {
+            if (!isTracing) return;
+            
+            isTracing = false;
+            gestureArea.classList.remove('active');
+            
+            if (currentPath.length > 3) {
+                const letter = recognizeLetter(currentPath);
+                addLetter(letter);
+            }
+            
+            currentPath = [];
+        }
+        
+        function recognizeLetter(path) {
+            // Simple letter recognition based on path characteristics
+            if (path.length < 5) return '?';
+            
+            const bounds = getBounds(path);
+            const width = bounds.maxX - bounds.minX;
+            const height = bounds.maxY - bounds.minY;
+            
+            // Recognize common email characters based on drawing patterns
+            const patterns = [
+                {chars: ['a', 'e', 'o'], test: () => isCircular(path)},
+                {chars: ['i', 'l', '1'], test: () => height > width * 2},
+                {chars: ['t', 'f'], test: () => hasCrossStroke(path)},
+                {chars: ['@'], test: () => isCircular(path) && hasInnerStroke(path)},
+                {chars: ['.'], test: () => path.length < 10 && width < 20 && height < 20},
+                {chars: ['m', 'n', 'u'], test: () => hasWaves(path)},
+                {chars: ['c', 'd', 'p'], test: () => isHalfCircular(path)},
+                {chars: ['g', 'j', 'y'], test: () => hasDescender(path)},
+                {chars: ['b', 'h', 'k'], test: () => height > width && hasVerticalStroke(path)}
+            ];
+            
+            // Try to match patterns
+            for (let pattern of patterns) {
+                if (pattern.test()) {
+                    return pattern.chars[Math.floor(Math.random() * pattern.chars.length)];
+                }
+            }
+            
+            // Fallback to random common email characters
+            const commonChars = ['a', 'e', 'i', 'o', 'u', 'n', 't', 'r', 's', 'l', 'c', 'm', 'g'];
+            return commonChars[Math.floor(Math.random() * commonChars.length)];
+        }
+        
+        function getBounds(path) {
+            const xs = path.map(p => p.x);
+            const ys = path.map(p => p.y);
+            return {
+                minX: Math.min(...xs),
+                maxX: Math.max(...xs),
+                minY: Math.min(...ys),
+                maxY: Math.max(...ys)
+            };
+        }
+        
+        function isCircular(path) {
+            if (path.length < 10) return false;
+            const center = getCenterPoint(path);
+            const distances = path.map(p => Math.sqrt((p.x - center.x)**2 + (p.y - center.y)**2));
+            const avgDistance = distances.reduce((a,b) => a+b) / distances.length;
+            const variance = distances.reduce((sum, d) => sum + (d - avgDistance)**2, 0) / distances.length;
+            return variance < avgDistance * 0.3;
+        }
+        
+        function getCenterPoint(path) {
+            const sumX = path.reduce((sum, p) => sum + p.x, 0);
+            const sumY = path.reduce((sum, p) => sum + p.y, 0);
+            return {x: sumX / path.length, y: sumY / path.length};
+        }
+        
+        function hasCrossStroke(path) {
+            // Simple cross detection
+            const bounds = getBounds(path);
+            const midY = (bounds.minY + bounds.maxY) / 2;
+            return path.some(p => Math.abs(p.y - midY) < 10);
+        }
+        
+        function hasInnerStroke(path) {
+            return path.length > 20; // More complex drawing suggests @
+        }
+        
+        function hasWaves(path) {
+            if (path.length < 8) return false;
+            let changes = 0;
+            for (let i = 2; i < path.length - 2; i++) {
+                const before = path[i-1].y - path[i-2].y;
+                const after = path[i+1].y - path[i].y;
+                if (before * after < 0) changes++;
+            }
+            return changes > 2;
+        }
+        
+        function isHalfCircular(path) {
+            return isCircular(path) && path.length < 20;
+        }
+        
+        function hasDescender(path) {
+            const bounds = getBounds(path);
+            const bottomQuarter = bounds.maxY - (bounds.maxY - bounds.minY) * 0.25;
+            return path.some(p => p.y > bottomQuarter);
+        }
+        
+        function hasVerticalStroke(path) {
+            const bounds = getBounds(path);
+            return (bounds.maxY - bounds.minY) > (bounds.maxX - bounds.minX) * 1.5;
+        }
+        
+        function addLetter(letter) {
+            recognizedEmail += letter;
+            updateDisplay();
+            recognitionFeedback.textContent = `Recognized: "${letter}" - Continue tracing...`;
+        }
+        
+        function updateDisplay() {
+            if (recognizedEmail.length === 0) {
+                emailDisplay.textContent = 'Start tracing your email...';
+            } else {
+                emailDisplay.textContent = recognizedEmail;
+            }
+        }
+        
+        function clearLetter() {
+            if (recognizedEmail.length > 0) {
+                recognizedEmail = recognizedEmail.slice(0, -1);
+                updateDisplay();
+                recognitionFeedback.textContent = 'Last letter removed';
+            }
+        }
+        
+        function clearAll() {
+            recognizedEmail = '';
+            updateDisplay();
+            recognitionFeedback.textContent = 'Email cleared - start tracing';
+            
+            // Clear all trails
+            const trails = gestureArea.querySelectorAll('.trail');
+            trails.forEach(trail => trail.remove());
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (recognizedEmail.length < 5 || !recognizedEmail.includes('@') || !recognizedEmail.includes('.')) {
+                showError('Please trace a valid email address (must include @ and .)');
+                return;
+            }
+            
+            alert(`Newsletter subscription successful!\nEmail: ${recognizedEmail}\nGesture recognition completed with ${recognizedEmail.length} characters traced.`);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

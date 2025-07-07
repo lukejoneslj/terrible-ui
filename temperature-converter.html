@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>temperature converter</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-section label {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .temp-input {
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 1rem;
+            width: 200px;
+            text-align: center;
+        }
+
+        .convert-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 2rem;
+        }
+
+        .convert-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .loading-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+
+        .progress-container {
+            width: 300px;
+            height: 20px;
+            background-color: #f0f0f0;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: black;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .result-text {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+
+        .conversion-info {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .convert-again-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .convert-again-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="input-section">
+            <h1>temperature converter</h1>
+            <div class="input-section">
+                <label for="fahrenheitInput">enter fahrenheit temperature:</label>
+                <input type="number" id="fahrenheitInput" class="temp-input" placeholder="32">
+                <div id="errorMessage" class="error-message" style="display: none;">please enter a valid temperature</div>
+            </div>
+            <button id="convertBtn" class="convert-btn">convert to celsius</button>
+        </div>
+
+        <div id="loading-section" class="loading-section">
+            <div class="loading-text">calculating temperature...</div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="result-section" class="result-section">
+            <div id="resultText" class="result-text"></div>
+            <div id="conversionInfo" class="conversion-info"></div>
+            <button id="convertAgainBtn" class="convert-again-btn">convert again</button>
+        </div>
+    </div>
+
+    <script>
+        let isConverting = false;
+
+        function startConversion() {
+            if (isConverting) return;
+            
+            const input = document.getElementById('fahrenheitInput');
+            const fahrenheit = parseFloat(input.value);
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide previous error
+            errorMessage.style.display = 'none';
+            
+            // Validate input
+            if (isNaN(fahrenheit)) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            isConverting = true;
+            
+            // Hide input section
+            document.getElementById('input-section').style.display = 'none';
+            
+            // Show loading section
+            document.getElementById('loading-section').style.display = 'block';
+            
+            // Start progress bar animation
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            
+            const interval = setInterval(() => {
+                progress += 1.25; // 100% / 80 intervals = 1.25% per interval
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult(fahrenheit);
+                }
+            }, 100); // 100ms * 80 intervals = 8 seconds
+        }
+
+        function showResult(fahrenheit) {
+            // Hide loading section
+            document.getElementById('loading-section').style.display = 'none';
+            
+            // Show result section
+            document.getElementById('result-section').style.display = 'block';
+            
+            // Convert fahrenheit to celsius: C = (F - 32) * 5/9
+            const celsius = Math.round(((fahrenheit - 32) * 5/9) * 100) / 100; // Round to 2 decimal places
+            
+            // Display result
+            document.getElementById('resultText').textContent = celsius + '°C';
+            document.getElementById('conversionInfo').textContent = `${fahrenheit}°F = ${celsius}°C`;
+            
+            isConverting = false;
+        }
+
+        function reset() {
+            if (isConverting) return;
+            
+            // Show input section
+            document.getElementById('input-section').style.display = 'block';
+            
+            // Hide other sections
+            document.getElementById('loading-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            
+            // Reset progress bar
+            document.getElementById('progressBar').style.width = '0%';
+            
+            // Clear input and error
+            document.getElementById('fahrenheitInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Event listeners
+        document.getElementById('convertBtn').addEventListener('click', startConversion);
+        document.getElementById('convertAgainBtn').addEventListener('click', reset);
+        
+        // Allow Enter key to trigger conversion
+        document.getElementById('fahrenheitInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startConversion();
+            }
+        });
+    </script>
+</body>
+</html> 

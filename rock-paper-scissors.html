@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-board {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            gap: 4rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player-side, .computer-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .side-label {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .choices {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .choice {
+            width: 120px;
+            height: 120px;
+            border: 4px solid black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+
+        .choice:hover {
+            transform: scale(1.1);
+        }
+
+        .computer-choice {
+            font-size: 8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .computer-choice.show {
+            opacity: 1;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .result-text.show {
+            opacity: 1;
+        }
+
+        .play-again {
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .play-again.show {
+            opacity: 1;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rock Paper Scissors</h1>
+        
+        <div class="game-board">
+            <div class="player-side">
+                <div class="side-label">Your Choice</div>
+                <div class="choices">
+                    <div class="choice" onclick="play('rock')">✊</div>
+                    <div class="choice" onclick="play('paper')">✋</div>
+                    <div class="choice" onclick="play('scissors')">✌️</div>
+                </div>
+            </div>
+
+            <div class="computer-side">
+                <div class="side-label">Computer</div>
+                <div class="computer-choice" id="computer-choice"></div>
+                <div class="result-text" id="result-text"></div>
+                <button class="play-again" onclick="resetGame()">play again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const resultText = document.getElementById('result-text');
+        const computerChoice = document.getElementById('computer-choice');
+
+        function play(playerChoice) {
+            // Always choose the winning move
+            const computerMove = getWinningMove(playerChoice);
+            
+            // Show computer's choice
+            computerChoice.textContent = getEmoji(computerMove);
+            computerChoice.classList.add('show');
+            
+            // Display result
+            resultText.innerHTML = `you lose!`;
+            resultText.classList.add('show');
+            
+            // Show play again button
+            document.querySelector('.play-again').classList.add('show');
+        }
+
+        function getWinningMove(playerChoice) {
+            switch(playerChoice) {
+                case 'rock': return 'paper';
+                case 'paper': return 'scissors';
+                case 'scissors': return 'rock';
+            }
+        }
+
+        function getEmoji(choice) {
+            switch(choice) {
+                case 'rock': return '✊';
+                case 'paper': return '✋';
+                case 'scissors': return '✌️';
+            }
+        }
+
+        function resetGame() {
+            resultText.classList.remove('show');
+            computerChoice.classList.remove('show');
+            document.querySelector('.play-again').classList.remove('show');
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wordle</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 3rem;
+            color: black;
+        }
+
+        .game-board {
+            margin-bottom: 2rem;
+        }
+
+        .guess-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .letter-box {
+            width: 60px;
+            height: 60px;
+            border: 2px solid black;
+            margin: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+        }
+
+        .letter-box.correct {
+            background-color: #90EE90;
+        }
+
+        .letter-box.present {
+            background-color: #FFD700;
+        }
+
+        .letter-box.absent {
+            background-color: #D3D3D3;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .guess-input {
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 1rem;
+            width: 200px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .submit-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 2rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+
+
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .play-again-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .play-again-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .attempts-left {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="game-section">
+            <h1>wordle</h1>
+            
+            <div class="game-board">
+                <div class="guess-row" id="row0">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+                <div class="guess-row" id="row1">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+                <div class="guess-row" id="row2">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+                <div class="guess-row" id="row3">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+                <div class="guess-row" id="row4">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+                <div class="guess-row" id="row5">
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                    <div class="letter-box"></div>
+                </div>
+            </div>
+
+            <div class="attempts-left" id="attemptsLeft">attempts left: 6</div>
+
+            <div class="input-section">
+                <input type="text" id="guessInput" class="guess-input" placeholder="enter guess" maxlength="5">
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <br>
+                <button id="submitBtn" class="submit-btn">check guess</button>
+            </div>
+        </div>
+
+
+
+        <div id="result-section" class="result-section">
+            <div id="resultText" class="result-text"></div>
+            <button id="playAgainBtn" class="play-again-btn">play again</button>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_WORD = 'WORDLE';
+        let currentAttempt = 0;
+        let gameOver = false;
+        let isAnalyzing = false;
+
+        function submitGuess() {
+            if (isAnalyzing || gameOver) return;
+            
+            const input = document.getElementById('guessInput');
+            const guess = input.value.toUpperCase().trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide previous error
+            errorMessage.style.display = 'none';
+            
+            // Validate input
+            if (guess.length !== 5) {
+                errorMessage.textContent = 'guess must be 5 letters';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            if (!/^[A-Z]+$/.test(guess)) {
+                errorMessage.textContent = 'guess must contain only letters';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            isAnalyzing = true;
+            processGuess(guess);
+        }
+
+        function processGuess(guess) {
+            // Get current row
+            const row = document.getElementById(`row${currentAttempt}`);
+            const boxes = row.children;
+            
+            // Fill in the letters and determine colors
+            for (let i = 0; i < 5; i++) {
+                const box = boxes[i];
+                const letter = guess[i];
+                box.textContent = letter;
+                
+                if (letter === TARGET_WORD[i]) {
+                    box.classList.add('correct');
+                } else if (TARGET_WORD.includes(letter)) {
+                    box.classList.add('present');
+                } else {
+                    box.classList.add('absent');
+                }
+            }
+            
+            // Clear input
+            document.getElementById('guessInput').value = '';
+            
+            // Check if won
+            if (guess === TARGET_WORD) {
+                gameOver = true;
+                setTimeout(() => {
+                    document.getElementById('game-section').style.display = 'none';
+                    document.getElementById('result-section').style.display = 'block';
+                    document.getElementById('resultText').textContent = `you won! the word was ${TARGET_WORD}`;
+                }, 500);
+                return;
+            }
+            
+            // Move to next attempt
+            currentAttempt++;
+            
+            // Update attempts left
+            const attemptsLeft = 6 - currentAttempt;
+            document.getElementById('attemptsLeft').textContent = `attempts left: ${attemptsLeft}`;
+            
+            // Check if lost
+            if (currentAttempt >= 6) {
+                gameOver = true;
+                setTimeout(() => {
+                    document.getElementById('game-section').style.display = 'none';
+                    document.getElementById('result-section').style.display = 'block';
+                    document.getElementById('resultText').textContent = `you lost! the word was ${TARGET_WORD}`;
+                }, 500);
+                return;
+            }
+            
+            isAnalyzing = false;
+        }
+
+        function reset() {
+            // Reset game state
+            currentAttempt = 0;
+            gameOver = false;
+            isAnalyzing = false;
+            
+            // Clear all boxes
+            for (let i = 0; i < 6; i++) {
+                const row = document.getElementById(`row${i}`);
+                const boxes = row.children;
+                for (let j = 0; j < 5; j++) {
+                    const box = boxes[j];
+                    box.textContent = '';
+                    box.classList.remove('correct', 'present', 'absent');
+                }
+            }
+            
+            // Reset UI
+            document.getElementById('game-section').style.display = 'block';
+            document.getElementById('result-section').style.display = 'none';
+            document.getElementById('guessInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('attemptsLeft').textContent = 'attempts left: 6';
+        }
+
+        // Event listeners
+        document.getElementById('submitBtn').addEventListener('click', submitGuess);
+        document.getElementById('playAgainBtn').addEventListener('click', reset);
+        
+        // Allow Enter key to submit guess
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitGuess();
+            }
+        });
+
+        // Auto-uppercase input
+        document.getElementById('guessInput').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+</body>
+</html> 

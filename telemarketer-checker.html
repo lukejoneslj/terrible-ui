@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📞 Telemarketer List Checker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #74b9ff;
+        }
+        
+        h1 {
+            color: #74b9ff;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .phone-emoji {
+            font-size: 4em;
+            margin-bottom: 30px;
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .phone-input {
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            background: #f8f9fa;
+            color: #333;
+            width: 250px;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .phone-input:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 15px rgba(116, 185, 255, 0.3);
+        }
+        
+        .scan-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        
+        .scan-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(116, 185, 255, 0.3);
+        }
+        
+        .scanning-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .status-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #636e72;
+            min-height: 1.5em;
+        }
+        
+        .progress-bar-container {
+            background: #f1f2f6;
+            border-radius: 20px;
+            padding: 3px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background: linear-gradient(90deg, #74b9ff, #0984e3);
+            border-radius: 17px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #74b9ff;
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .result-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #e17055;
+            font-weight: bold;
+        }
+        
+        .result-content {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #e17055;
+            border: 2px solid #e17055;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .result-emoji {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .result-text {
+            font-size: 1.3em;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #636e72;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #2d3436;
+            transform: translateY(-2px);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .decorative-phones {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+        
+        .decorative-warning {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decorative-phones">📱</div>
+        <div class="decorative-warning">⚠️</div>
+        <span class="phone-emoji">📞</span>
+        <h1>Telemarketer List Checker</h1>
+        
+        <div id="input-phase">
+            <div class="question">Enter your phone number to check if it's on telemarketer lists</div>
+            <input type="tel" id="phoneInput" class="phone-input" placeholder="555-123-4567">
+            <br><br>
+            <button id="scanBtn" class="scan-btn">Check My Number 🔍</button>
+        </div>
+
+        <div id="scanning-phase" class="scanning-section">
+            <div id="statusText" class="status-text">Scanning telemarketer databases...</div>
+            
+            <div class="progress-bar-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            
+            <div id="progressText" class="progress-text">0%</div>
+        </div>
+
+        <div id="result-phase" class="result-section">
+            <div class="result-title">Oops! 📞</div>
+            <div class="result-content">
+                <span class="result-emoji">🎉</span>
+                <div class="result-text">
+                    Well... it wasn't on any telemarketer lists before...<br>
+                    <strong>BUT NOW IT IS!</strong><br><br>
+                    Congratulations! By checking if your number was on spam lists,<br>
+                    you've now been added to all of them!<br><br>
+                    <strong>Expect 47 calls per hour</strong> 📞📞📞
+                </div>
+            </div>
+            <button onclick="reset()" class="reset-btn">Check Another Number</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPhone = '';
+        let isScanning = false;
+        
+        const scanMessages = [
+            "Scanning telemarketer databases...",
+            "Checking robocall networks...",
+            "Searching spam databases...",
+            "Analyzing call patterns...",
+            "Cross-referencing phone lists...",
+            "Finalizing scan results...",
+            "Oh no... 😅"
+        ];
+
+        // Start scan
+        function startScan() {
+            if (isScanning) return;
+            
+            const input = document.getElementById('phoneInput');
+            currentPhone = input.value;
+            
+            if (!currentPhone) {
+                alert("Please enter a phone number!");
+                return;
+            }
+            
+            isScanning = true;
+            
+            // Hide input phase
+            document.getElementById('input-phase').style.display = 'none';
+            
+            // Show scanning phase
+            document.getElementById('scanning-phase').style.display = 'block';
+            
+            // Start scan simulation
+            simulateScan();
+        }
+
+        function simulateScan() {
+            let progress = 0;
+            let messageIndex = 0;
+            const statusText = document.getElementById('statusText');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            const scanInterval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                progressText.textContent = Math.floor(progress) + '%';
+                
+                // Update status message
+                if (messageIndex < scanMessages.length - 1 && Math.random() > 0.7) {
+                    messageIndex++;
+                    statusText.textContent = scanMessages[messageIndex];
+                }
+                
+                // Complete scan
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    statusText.textContent = "Scan complete! 😅";
+                    setTimeout(showResults, 1000);
+                }
+            }, 400);
+        }
+
+        function showResults() {
+            // Hide scanning phase
+            document.getElementById('scanning-phase').style.display = 'none';
+            
+            // Show result phase
+            document.getElementById('result-phase').style.display = 'block';
+            
+            isScanning = false;
+        }
+
+        function reset() {
+            if (isScanning) return;
+            
+            // Reset all phases
+            document.getElementById('input-phase').style.display = 'block';
+            document.getElementById('scanning-phase').style.display = 'none';
+            document.getElementById('result-phase').style.display = 'none';
+            
+            // Clear input
+            document.getElementById('phoneInput').value = '';
+            
+            // Reset progress
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressText').textContent = '0%';
+            document.getElementById('statusText').textContent = scanMessages[0];
+        }
+
+        // Event handlers
+        document.getElementById('scanBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            startScan();
+        });
+
+        document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                startScan();
+            }
+        });
+
+        // Format phone number input
+        document.getElementById('phoneInput').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 6) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{3})(\d{0,3})/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html> 

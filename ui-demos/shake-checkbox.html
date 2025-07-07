@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Agreement Form</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            position: relative;
+        }
+        .checkbox-container {
+            margin-right: 15px;
+            margin-top: 2px;
+            position: relative;
+        }
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007bff;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .checkbox-input.checked {
+            background: #007bff;
+        }
+        .checkbox-input.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .checkbox-input.shaking {
+            animation: shake 0.1s infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-1px); }
+            75% { transform: translateX(1px); }
+        }
+        .checkbox-label {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .checkbox-label a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+        .gesture-feedback {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Account Registration</h1>
+        
+        <div class="instructions">
+            <h3>Enhanced Security Verification</h3>
+            <p>This form uses advanced gesture recognition to ensure you're a real person. Please complete all fields.</p>
+        </div>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-input" required>
+            </div>
+            
+            <div class="checkbox-group" id="checkboxGroup">
+                <div class="checkbox-container">
+                    <div class="checkbox-input" id="termsCheckbox"></div>
+                </div>
+                <div class="checkbox-label">
+                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. 
+                    I understand that by creating an account, I am bound by these terms and conditions.
+                </div>
+                <div class="gesture-feedback" id="gestureFeedback">
+                    Shake intensity: 0%
+                </div>
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                Please agree to the terms and conditions to continue.
+            </div>
+            
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+    </div>
+
+    <script>
+        let mousePositions = [];
+        let shakeIntensity = 0;
+        let isChecked = false;
+        let isHovering = false;
+        const shakeThreshold = 70;
+        
+        const checkboxGroup = document.getElementById('checkboxGroup');
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const gestureFeedback = document.getElementById('gestureFeedback');
+        const registrationForm = document.getElementById('registrationForm');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        checkboxGroup.addEventListener('mousemove', handleMouseMove);
+        checkboxGroup.addEventListener('mouseenter', startTracking);
+        checkboxGroup.addEventListener('mouseleave', stopTracking);
+        
+        // Prevent normal clicking
+        termsCheckbox.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!isChecked) {
+                showError('Please use the gesture verification to accept the terms.');
+            }
+        });
+        
+        registrationForm.addEventListener('submit', handleSubmit);
+        
+        function startTracking() {
+            isHovering = true;
+            mousePositions = [];
+        }
+        
+        function stopTracking() {
+            isHovering = false;
+            shakeIntensity = 0;
+            updateUI();
+        }
+        
+        function handleMouseMove(e) {
+            if (!isHovering) return;
+            
+            const rect = checkboxGroup.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const timestamp = Date.now();
+            
+            // Store mouse position
+            mousePositions.push({ x, y, timestamp });
+            
+            // Keep only recent positions (last 500ms)
+            const cutoff = timestamp - 500;
+            mousePositions = mousePositions.filter(pos => pos.timestamp > cutoff);
+            
+            // Calculate shake intensity
+            calculateShakeIntensity();
+            updateUI();
+        }
+        
+        function calculateShakeIntensity() {
+            if (mousePositions.length < 5) {
+                shakeIntensity = 0;
+                return;
+            }
+            
+            // Calculate total distance moved
+            let totalDistance = 0;
+            for (let i = 1; i < mousePositions.length; i++) {
+                const dx = mousePositions[i].x - mousePositions[i-1].x;
+                const dy = mousePositions[i].y - mousePositions[i-1].y;
+                totalDistance += Math.sqrt(dx*dx + dy*dy);
+            }
+            
+            // Calculate direction changes
+            let directionChanges = 0;
+            for (let i = 2; i < mousePositions.length; i++) {
+                const dx1 = mousePositions[i-1].x - mousePositions[i-2].x;
+                const dy1 = mousePositions[i-1].y - mousePositions[i-2].y;
+                const dx2 = mousePositions[i].x - mousePositions[i-1].x;
+                const dy2 = mousePositions[i].y - mousePositions[i-1].y;
+                
+                const dotProduct = dx1*dx2 + dy1*dy2;
+                const magnitude1 = Math.sqrt(dx1*dx1 + dy1*dy1);
+                const magnitude2 = Math.sqrt(dx2*dx2 + dy2*dy2);
+                
+                if (magnitude1 > 0 && magnitude2 > 0) {
+                    const cosAngle = dotProduct / (magnitude1 * magnitude2);
+                    if (cosAngle < 0) {
+                        directionChanges++;
+                    }
+                }
+            }
+            
+            // Combine factors for shake intensity
+            shakeIntensity = Math.min(100, (totalDistance / 8) + (directionChanges * 6));
+            
+            // Check if we should toggle the checkbox
+            if (shakeIntensity > shakeThreshold && !isChecked) {
+                toggleCheckbox();
+            }
+        }
+        
+        function toggleCheckbox() {
+            isChecked = !isChecked;
+            
+            // Reset shake intensity
+            shakeIntensity = 0;
+            mousePositions = [];
+            
+            // Update checkbox appearance
+            if (isChecked) {
+                termsCheckbox.classList.add('checked');
+                gestureFeedback.textContent = 'Verification complete ✓';
+                gestureFeedback.style.color = '#28a745';
+                errorMessage.style.display = 'none';
+            } else {
+                termsCheckbox.classList.remove('checked');
+                gestureFeedback.textContent = 'Shake intensity: 0%';
+                gestureFeedback.style.color = '#6c757d';
+            }
+        }
+        
+        function updateUI() {
+            gestureFeedback.textContent = `Shake intensity: ${Math.round(shakeIntensity)}%`;
+            
+            // Add shaking animation when close to threshold
+            if (shakeIntensity > 40) {
+                termsCheckbox.classList.add('shaking');
+                checkboxGroup.style.borderColor = '#ffc107';
+                checkboxGroup.style.background = '#fff3cd';
+            } else {
+                termsCheckbox.classList.remove('shaking');
+                checkboxGroup.style.borderColor = '#e0e0e0';
+                checkboxGroup.style.background = '#f8f9fa';
+            }
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (!isChecked) {
+                showError('Please agree to the terms and conditions to continue.');
+                return;
+            }
+            
+            // Validate other fields
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!username || !email || !password) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+            
+            alert('Account created successfully!\nGesture verification passed.');
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

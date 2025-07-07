@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Helper for Business Majors</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #0984e3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tech-emoji {
+            font-size: 4em;
+            margin-bottom: 30px;
+            display: block;
+        }
+        
+        .item-display {
+            font-size: 8em;
+            margin: 30px 0;
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #636e72;
+            font-style: italic;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn-reveal {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .btn-reveal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn-next {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(232, 67, 147, 0.3);
+        }
+        
+        .btn-start {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            font-size: 1.3em;
+            padding: 18px 35px;
+        }
+        
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+        
+        .result {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .result-reveal {
+            background: linear-gradient(45deg, #d1f2eb, #a7e9af);
+            color: #00b894;
+            border: 2px solid #00b894;
+        }
+        
+        .result-complete {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #e17055;
+            border: 2px solid #e17055;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-emoji {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #636e72;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #2d3436;
+            transform: translateY(-2px);
+        }
+        
+        .progress {
+            font-size: 1em;
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+        
+        .intro-text {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #2d3436;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="tech-emoji">📚</span>
+        <h1>Tech Helper for Business Majors</h1>
+        
+        <div id="intro-section">
+            <div class="intro-text">
+                Master advanced technical terminology with our comprehensive learning system!
+            </div>
+            <div class="subtitle">Professional development made simple</div>
+            <div class="button-container">
+                <button class="btn btn-start" onclick="startQuiz()">Begin Training 🎓</button>
+            </div>
+        </div>
+        
+        <div id="quiz-section" class="hidden">
+            <div class="progress">
+                <span id="current-question">1</span> of <span id="total-questions">5</span>
+            </div>
+            <div class="item-display" id="current-item"></div>
+            <div class="question" id="question-text"></div>
+            <div class="button-container">
+                <button class="btn btn-reveal" onclick="revealAnswer()">Reveal Answer 🔍</button>
+            </div>
+        </div>
+        
+        <div id="answer-section" class="hidden">
+            <div class="progress">
+                <span id="current-question-2">1</span> of <span id="total-questions-2">5</span>
+            </div>
+            <div class="item-display" id="current-item-2"></div>
+            <div id="answer-text" class="result result-reveal"></div>
+            <div class="button-container">
+                <button class="btn btn-next" onclick="nextQuestion()" id="next-btn">Next Question →</button>
+            </div>
+        </div>
+        
+        <div id="complete-section" class="hidden">
+            <div class="result result-complete">
+                <span class="status-emoji">🎉</span>
+                <div>Congratulations! You've mastered all the advanced technical terminology!</div>
+                <div style="margin-top: 15px; font-size: 1.1em;">
+                    You're now qualified to say "Let's take this offline" and "Can you ping me about that?"
+                </div>
+                <span class="status-emoji">💼</span>
+            </div>
+            <button class="reset-btn" onclick="resetQuiz()">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                item: "💻",
+                question: "What is this complex piece of technology?",
+                answer: "This is a 'Computer' - an advanced digital processing unit used for computational tasks and data management."
+            },
+            {
+                item: "🖱️",
+                question: "Identify this sophisticated input device:",
+                answer: "This is a 'Mouse' - a precision pointing instrument for graphical user interface navigation."
+            },
+            {
+                item: "⌨️",
+                question: "What is this professional input mechanism?",
+                answer: "This is a 'Keyboard' - a tactile character input matrix for alphanumeric data entry."
+            },
+            {
+                item: "🖥️",
+                question: "Name this enterprise-grade display system:",
+                answer: "This is a 'Monitor' - a visual output rendering device for digital content presentation."
+            },
+            {
+                item: "🖨️",
+                question: "What is this document production apparatus?",
+                answer: "This is a 'Printer' - a hardcopy output generation system for physical document creation."
+            }
+        ];
+        
+        let currentQuestionIndex = 0;
+        
+        function startQuiz() {
+            const introSection = document.getElementById('intro-section');
+            const quizSection = document.getElementById('quiz-section');
+            
+            introSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            document.getElementById('current-item').textContent = currentQuestion.item;
+            document.getElementById('question-text').textContent = currentQuestion.question;
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions').textContent = questions.length;
+        }
+        
+        function revealAnswer() {
+            const quizSection = document.getElementById('quiz-section');
+            const answerSection = document.getElementById('answer-section');
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            quizSection.classList.add('hidden');
+            answerSection.classList.remove('hidden');
+            
+            document.getElementById('current-item-2').textContent = currentQuestion.item;
+            document.getElementById('answer-text').innerHTML = `
+                <span class="status-emoji">💡</span>
+                <div>${currentQuestion.answer}</div>
+            `;
+            document.getElementById('current-question-2').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions-2').textContent = questions.length;
+            
+            // Update button text for last question
+            if (currentQuestionIndex === questions.length - 1) {
+                document.getElementById('next-btn').textContent = 'Complete Training 🎓';
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                const answerSection = document.getElementById('answer-section');
+                const quizSection = document.getElementById('quiz-section');
+                
+                answerSection.classList.add('hidden');
+                quizSection.classList.remove('hidden');
+                
+                showQuestion();
+            } else {
+                // Quiz complete
+                const answerSection = document.getElementById('answer-section');
+                const completeSection = document.getElementById('complete-section');
+                
+                answerSection.classList.add('hidden');
+                completeSection.classList.remove('hidden');
+            }
+        }
+        
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            
+            const completeSection = document.getElementById('complete-section');
+            const introSection = document.getElementById('intro-section');
+            
+            completeSection.classList.add('hidden');
+            introSection.classList.remove('hidden');
+            
+            // Reset next button text
+            document.getElementById('next-btn').textContent = 'Next Question →';
+        }
+    </script>
+</body>
+</html> 

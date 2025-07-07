@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Music Detector</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #0984e3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .mic-emoji {
+            font-size: 4em;
+            margin-bottom: 30px;
+            display: block;
+        }
+        
+        .instruction {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn-mic {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            color: white;
+            font-size: 1.5em;
+            padding: 20px 40px;
+        }
+        
+        .btn-mic:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(232, 67, 147, 0.3);
+        }
+        
+        .btn-mic:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-yes {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn-no {
+            background: linear-gradient(45deg, #e17055, #d63031);
+            color: white;
+        }
+        
+        .btn-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(214, 48, 49, 0.3);
+        }
+        
+        .result {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .result-yes {
+            background: linear-gradient(45deg, #d1f2eb, #a7e9af);
+            color: #00b894;
+            border: 2px solid #00b894;
+        }
+        
+        .result-no {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #e17055;
+            border: 2px solid #e17055;
+        }
+        
+        .listening {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            border: 2px solid #6c5ce7;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-emoji {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #636e72;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #2d3436;
+            transform: translateY(-2px);
+        }
+        
+        .listening-animation {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="mic-emoji">🎤</span>
+        <h1>AI Music Detector</h1>
+        
+        <div id="start-section">
+            <div class="instruction">Click the microphone to analyze the music around you!</div>
+            <div class="button-container">
+                <button class="btn btn-mic" onclick="startListening()">🎵 Listen 🎵</button>
+            </div>
+        </div>
+        
+        <div id="listening-section" class="hidden">
+            <div class="result listening">
+                <span class="status-emoji listening-animation">🎧</span>
+                <div>Analyzing audio waves...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <div id="countdown">3</div>
+            </div>
+        </div>
+        
+        <div id="question-section" class="hidden">
+            <div class="question">Was AI used to create this song?</div>
+            <div class="button-container">
+                <button class="btn btn-yes" onclick="showResult('yes')">Yes! 🤖</button>
+                <button class="btn btn-no" onclick="showResult('no')">No! 👨‍🎤</button>
+            </div>
+        </div>
+        
+        <div id="result-section" class="hidden">
+            <div id="result-text" class="result"></div>
+            <button class="reset-btn" onclick="resetDetector()">Analyze Again</button>
+        </div>
+    </div>
+
+    <script>
+        let countdownInterval;
+        let progressInterval;
+        
+        function startListening() {
+            const startSection = document.getElementById('start-section');
+            const listeningSection = document.getElementById('listening-section');
+            const countdown = document.getElementById('countdown');
+            const progressFill = document.getElementById('progress');
+            
+            startSection.classList.add('hidden');
+            listeningSection.classList.remove('hidden');
+            
+            let timeLeft = 3;
+            let progress = 0;
+            
+            // Progress bar animation
+            progressInterval = setInterval(() => {
+                progress += 100/30; // 30 steps over 3 seconds
+                progressFill.style.width = Math.min(progress, 100) + '%';
+            }, 100);
+            
+            // Countdown
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdown.textContent = timeLeft;
+                
+                if (timeLeft === 0) {
+                    clearInterval(countdownInterval);
+                    clearInterval(progressInterval);
+                    showQuestion();
+                }
+            }, 1000);
+        }
+        
+        function showQuestion() {
+            const listeningSection = document.getElementById('listening-section');
+            const questionSection = document.getElementById('question-section');
+            
+            listeningSection.classList.add('hidden');
+            questionSection.classList.remove('hidden');
+        }
+        
+        function showResult(answer) {
+            const questionSection = document.getElementById('question-section');
+            const resultSection = document.getElementById('result-section');
+            const resultText = document.getElementById('result-text');
+            
+            questionSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            
+            if (answer === 'yes') {
+                resultText.innerHTML = `
+                    <span class="status-emoji">🎯</span>
+                    <div>Correct! My advanced AI algorithms detected 127 signs of artificial intelligence in this track!</div>
+                    <span class="status-emoji">🤖</span>
+                `;
+                resultText.className = 'result result-yes';
+            } else {
+                resultText.innerHTML = `
+                    <span class="status-emoji">🎭</span>
+                    <div>Wrong! This song was clearly made by AI. I can tell by the way it sounds exactly like music!</div>
+                    <span class="status-emoji">🎼</span>
+                `;
+                resultText.className = 'result result-no';
+            }
+        }
+        
+        function resetDetector() {
+            const resultSection = document.getElementById('result-section');
+            const startSection = document.getElementById('start-section');
+            const countdown = document.getElementById('countdown');
+            const progressFill = document.getElementById('progress');
+            
+            // Clear any running intervals
+            clearInterval(countdownInterval);
+            clearInterval(progressInterval);
+            
+            // Reset UI
+            resultSection.classList.add('hidden');
+            startSection.classList.remove('hidden');
+            countdown.textContent = '3';
+            progressFill.style.width = '0%';
+        }
+    </script>
+</body>
+</html> 

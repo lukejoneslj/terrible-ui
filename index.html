@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Mind Reader 3000 - Revolutionary Brain Scanner 🧠</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #fd79a8);
+            background-size: 600% 600%;
+            animation: gradientShift 3s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 0% 100%; }
+            75% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 100px rgba(255, 255, 255, 0.5);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #fd79a8);
+            border-radius: 23px;
+            z-index: -1;
+            animation: borderGlow 2s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            50% { filter: hue-rotate(180deg) brightness(1.5); }
+            100% { filter: hue-rotate(360deg) brightness(1); }
+        }
+
+        .title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            animation: megaPulse 1.5s infinite, rainbow 3s linear infinite;
+        }
+
+        @keyframes megaPulse {
+            0% { transform: scale(1) rotateZ(0deg); }
+            25% { transform: scale(1.1) rotateZ(-2deg); }
+            50% { transform: scale(1.15) rotateZ(2deg); }
+            75% { transform: scale(1.05) rotateZ(-1deg); }
+            100% { transform: scale(1) rotateZ(0deg); }
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff6b6b; }
+            16% { color: #4ecdc4; }
+            32% { color: #45b7d1; }
+            48% { color: #96ceb4; }
+            64% { color: #ffeaa7; }
+            80% { color: #fd79a8; }
+            100% { color: #ff6b6b; }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: flicker 2s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 90%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .number-input {
+            padding: 1rem;
+            font-size: 1.5rem;
+            border: 3px solid #4ecdc4;
+            border-radius: 10px;
+            text-align: center;
+            width: 200px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .number-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+            transform: scale(1.05);
+        }
+
+        .submit-btn {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.3rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.1) rotateZ(-2deg);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.95);
+        }
+
+        .loading-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            animation: dramaticBlink 0.8s infinite;
+            min-height: 1.5rem;
+        }
+
+        @keyframes dramaticBlink {
+            0%, 40% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 5px;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: scanLine 2s linear infinite;
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar {
+            height: 35px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            animation: megaShimmer 1s infinite;
+        }
+
+        @keyframes megaShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4ecdc4;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            animation: celebrate 2s infinite;
+        }
+
+        .result-number {
+            font-size: 5rem;
+            color: #ff6b6b;
+            text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+            animation: megaBounce 1s infinite, glow 2s ease-in-out infinite alternate;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        @keyframes megaBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) scale(1); }
+            40% { transform: translateY(-30px) scale(1.1); }
+            60% { transform: translateY(-15px) scale(1.05); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), 0 0 20px #ff6b6b; }
+            to { text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8), 0 0 40px #ff6b6b, 0 0 60px #ff6b6b; }
+        }
+
+        .brain-icon {
+            font-size: 4rem;
+            animation: brainSpin 1.5s linear infinite, brainPulse 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes brainSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes brainPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .reset-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background: linear-gradient(45deg, #96ceb4, #ffeaa7, #fd79a8);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .reset-btn:hover {
+            transform: scale(1.05) rotateZ(-1deg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 2rem;
+            font-style: italic;
+            animation: blink 3s infinite;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { opacity: 0.8; }
+            95% { opacity: 0.3; }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .screen-shake {
+            animation: screenShake 2s;
+        }
+
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-5px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-weight: bold;
+            animation: errorFlash 0.5s infinite;
+            display: none;
+        }
+
+        @keyframes errorFlash {
+            0%, 50%, 100% { background: rgba(255, 0, 0, 0.8); }
+            25%, 75% { background: rgba(255, 0, 0, 1); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffeaa7;
+            border-radius: 50%;
+            animation: particle-float 3s linear infinite;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div id="input-phase">
+            <h1 class="title">🧠 MIND READER 3000 🧠</h1>
+            <p class="subtitle">🚀 Revolutionary Quantum Bluetooth Brain Scanner Technology™ 🚀</p>
+            
+            <div class="input-section">
+                <p>🔮 Think of a number and type it below 🔮</p>
+                <br>
+                <input type="number" id="numberInput" class="number-input" placeholder="Enter your number">
+                <br><br>
+                <button id="submitBtn" class="submit-btn">⚡ READ MY MIND ⚡</button>
+            </div>
+            
+            <p class="disclaimer">
+                *⚠️ 100% Scientific. Connects directly to your brain via Quantum Bluetooth 6.0 ⚠️*<br>
+                *💀 Warning: May cause temporary enlightenment 💀*
+            </p>
+        </div>
+
+        <div id="loading-phase" class="loading-section">
+            <div class="brain-icon">🧠</div>
+            <div id="loadingText" class="loading-text">🔄 Initializing quantum brain scanner...</div>
+            
+            <div id="errorMessage" class="error-message">
+                🚨 ERROR: BRAIN NOT FOUND! 🚨<br>
+                Attempting emergency neural bypass...
+            </div>
+            
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            
+            <div id="progressText">0%</div>
+        </div>
+
+        <div id="result-phase" class="result-section">
+            <h2 class="result-title">🎉💥 MIND READ SUCCESSFUL! 💥🎉</h2>
+            <p>✨ Your number is... ✨</p>
+            <div id="resultNumber" class="result-number">?</div>
+            <p>🤯 IMPOSSIBLE! THE MACHINE ACTUALLY WORKS! 🤯</p>
+            <p>📡 Your thoughts have been successfully hacked! 📡</p>
+            <button onclick="reset()" class="reset-btn">🔄 Hack Another Brain 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        let isProcessing = false;
+        
+        const loadingMessages = [
+            "🔄 Initializing quantum brain scanner...",
+            "📡 Connecting to your neural network...",
+            "🔗 Pairing with Bluetooth Brain™...",
+            "🧬 Scanning for thought patterns...",
+            "🔓 Decrypting brainwaves...",
+            "⚡ Analyzing synaptic activity...",
+            "💻 Hacking into your consciousness...",
+            "📥 Downloading your thoughts...",
+            "🧮 Processing mental data...",
+            "🎯 Penetrating psychic defenses...",
+            "🌀 Synchronizing with your mind...",
+            "🔮 Reading neural pathways...",
+            "⚗️ Extracting memory fragments...",
+            "🚀 Almost there... READING YOUR MIND..."
+        ];
+
+        // Add click sound effect
+        function playClickSound() {
+            // Create a simple beep sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    particlesContainer.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 5000);
+                }, i * 100);
+            }
+        }
+
+        function startReading() {
+            if (isProcessing) return; // Prevent double clicks
+            
+            const input = document.getElementById('numberInput');
+            currentNumber = input.value;
+            
+            if (!currentNumber) {
+                document.body.classList.add('shake');
+                alert("🚨 CRITICAL ERROR: Please enter a number first! I can't read an empty mind! 🤔💭");
+                setTimeout(() => document.body.classList.remove('shake'), 500);
+                return;
+            }
+            
+            isProcessing = true;
+            
+            try {
+                playClickSound();
+            } catch (e) {
+                // Audio context might fail, continue anyway
+            }
+            
+            // Add screen shake effect
+            document.body.classList.add('screen-shake');
+            
+            // Create particles
+            createParticles();
+            
+            // Hide input phase
+            document.getElementById('input-phase').style.display = 'none';
+            
+            // Show loading phase
+            document.getElementById('loading-phase').style.display = 'block';
+            
+            // Start the fake loading process
+            simulateLoading();
+        }
+
+        function simulateLoading() {
+            let progress = 0;
+            let messageIndex = 0;
+            const loadingText = document.getElementById('loadingText');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Show fake error first
+            setTimeout(() => {
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 2000);
+            }, 1000);
+            
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 12 + 3; // Random increment between 3-15
+                
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                progressText.textContent = Math.floor(progress) + '%';
+                
+                // Change loading message more frequently
+                if (messageIndex < loadingMessages.length - 1 && Math.random() > 0.6) {
+                    messageIndex++;
+                    loadingText.textContent = loadingMessages[messageIndex];
+                }
+                
+                // Add random screen shakes during loading
+                if (Math.random() > 0.85) {
+                    document.body.classList.add('shake');
+                    setTimeout(() => document.body.classList.remove('shake'), 300);
+                }
+                
+                // Complete loading
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    loadingText.textContent = "🎯 BREAKTHROUGH! Mind successfully penetrated!";
+                    setTimeout(showResult, 1500);
+                }
+            }, 200); // Faster updates
+        }
+
+        function showResult() {
+            // Hide loading phase
+            document.getElementById('loading-phase').style.display = 'none';
+            
+            // Show result phase
+            document.getElementById('result-phase').style.display = 'block';
+            
+            // More particles for celebration
+            createParticles();
+            createParticles();
+            
+            // Dramatic number reveal with more chaos
+            const resultElement = document.getElementById('resultNumber');
+            let count = 0;
+            const targetNumber = parseInt(currentNumber);
+            
+            const countInterval = setInterval(() => {
+                count = Math.floor(Math.random() * 9999); // Random numbers first
+                resultElement.textContent = count;
+                
+                // Random screen shakes during reveal
+                if (Math.random() > 0.7) {
+                    document.body.classList.add('shake');
+                    setTimeout(() => document.body.classList.remove('shake'), 100);
+                }
+            }, 50); // Faster number cycling
+            
+            // After 3 seconds, reveal the actual number
+            setTimeout(() => {
+                clearInterval(countInterval);
+                resultElement.textContent = targetNumber;
+                resultElement.style.animation = 'megaBounce 1s infinite, glow 2s ease-in-out infinite alternate, celebrate 2s infinite';
+                
+                // Final dramatic effect
+                document.body.classList.add('screen-shake');
+                createParticles();
+                setTimeout(() => {
+                    document.body.classList.remove('screen-shake');
+                    isProcessing = false;
+                }, 2000);
+            }, 3000);
+        }
+
+        function reset() {
+            if (isProcessing) return;
+            
+            // Reset all phases
+            document.getElementById('input-phase').style.display = 'block';
+            document.getElementById('loading-phase').style.display = 'none';
+            document.getElementById('result-phase').style.display = 'none';
+            
+            // Clear input
+            document.getElementById('numberInput').value = '';
+            
+            // Reset progress
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressText').textContent = '0%';
+            document.getElementById('loadingText').textContent = loadingMessages[0];
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Remove any lingering effects
+            document.body.classList.remove('shake', 'screen-shake');
+        }
+
+        // Improved event handling to prevent double clicks
+        document.getElementById('submitBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            startReading();
+        });
+
+        // Enter key support
+        document.getElementById('numberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                startReading();
+            }
+        });
+
+        // Prevent form submission
+        document.getElementById('numberInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html> 

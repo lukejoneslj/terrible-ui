@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Did I Shower Today?</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #0984e3;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .shower-emoji {
+            font-size: 4em;
+            margin-bottom: 30px;
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn-yes {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn-no {
+            background: linear-gradient(45deg, #e17055, #d63031);
+            color: white;
+        }
+        
+        .btn-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(214, 48, 49, 0.3);
+        }
+        
+        .result {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .result-yes {
+            background: linear-gradient(45deg, #d1f2eb, #a7e9af);
+            color: #00b894;
+            border: 2px solid #00b894;
+        }
+        
+        .result-no {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #e17055;
+            border: 2px solid #e17055;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .soap-emoji {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #636e72;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #2d3436;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="shower-emoji">🚿</span>
+        <h1>Did I Shower Today?</h1>
+        
+        <div id="question-section">
+            <div class="question">The eternal question that haunts us all...</div>
+            <div class="button-container">
+                <button class="btn btn-yes" onclick="showResult('yes')">Yes! 🧼</button>
+                <button class="btn btn-no" onclick="showResult('no')">No... 😅</button>
+            </div>
+        </div>
+        
+        <div id="result-section" class="hidden">
+            <div id="result-text" class="result"></div>
+            <button class="reset-btn" onclick="resetGame()">Ask Again</button>
+        </div>
+    </div>
+
+    <script>
+        function showResult(answer) {
+            const questionSection = document.getElementById('question-section');
+            const resultSection = document.getElementById('result-section');
+            const resultText = document.getElementById('result-text');
+            
+            questionSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            
+            if (answer === 'yes') {
+                resultText.innerHTML = `
+                    <span class="soap-emoji">🎉</span>
+                    <div>Good job! This is your first time showering in 287 days!</div>
+                    <span class="soap-emoji">🧽</span>
+                `;
+                resultText.className = 'result result-yes';
+            } else {
+                resultText.innerHTML = `
+                    <span class="soap-emoji">😴</span>
+                    <div>No worries! It's only been 287 days since your last shower. Try again tomorrow!</div>
+                    <span class="soap-emoji">🛁</span>
+                `;
+                resultText.className = 'result result-no';
+            }
+        }
+        
+        function resetGame() {
+            const questionSection = document.getElementById('question-section');
+            const resultSection = document.getElementById('result-section');
+            
+            resultSection.classList.add('hidden');
+            questionSection.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html> 

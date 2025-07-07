@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deceptively Terrible UI Demos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .demo-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .demo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .demo-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .demo-card p {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .demo-link {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+        .demo-link:hover {
+            background: #0056b3;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .warning p {
+            color: #856404;
+            margin: 0;
+        }
+        .features {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e9ecef;
+        }
+        .features h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .features ul {
+            color: #555;
+            padding-left: 20px;
+        }
+        .features li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Deceptively Terrible UI Demos</h1>
+        <p class="subtitle">Professional-looking forms with secretly awful user experiences</p>
+        
+
+        
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>Audio Settings Form</h3>
+                <p>A professional volume control interface that requires you to physically speak into your microphone to calibrate the volume level. The louder you speak, the higher the volume setting.</p>
+                <a href="volume-screamer.html" class="demo-link">Try Volume Control</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>Product Order Form</h3>
+                <p>An e-commerce quantity selector that looks completely normal but requires you to draw circles with your mouse to increment the quantity. Each complete circle adds one item to your cart.</p>
+                <a href="circular-slider.html" class="demo-link">Try Product Order</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>User Agreement Form</h3>
+                <p>A standard registration form with "Enhanced Security Verification" that requires violent mouse shaking within a designated area to agree to the terms and conditions.</p>
+                <a href="shake-checkbox.html" class="demo-link">Try User Agreement</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>Customer Feedback Form</h3>
+                <p>A professional feedback form with "patience detection" technology. You must keep your mouse perfectly still for several seconds to reveal each dropdown option.</p>
+                <a href="stare-dropdown.html" class="demo-link">Try Customer Feedback</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>Secure Account Setup</h3>
+                <p>An advanced password creation form using "biometric hand movement analysis." Instead of typing, you must draw your password pattern with mouse movements on a canvas.</p>
+                <a href="password-drawer.html" class="demo-link">Try Account Setup</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>Customer Satisfaction Survey</h3>
+                <p>A survey form with "voice sentiment analysis" technology. To rate your satisfaction, you must hum into your microphone at different pitches - low pitch for 1 star, high pitch for 5 stars.</p>
+                <a href="pitch-survey.html" class="demo-link">Try Satisfaction Survey</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3>Newsletter Subscription</h3>
+                <p>An email subscription form with "advanced gesture recognition." You must trace each letter of your email address in the air using mouse movements to input your email.</p>
+                <a href="air-tracer.html" class="demo-link">Try Newsletter Signup</a>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h2>What Makes These Terrible</h2>
+            <ul>
+                <li><strong>Deceptive Appearance:</strong> Each form looks completely professional and legitimate</li>
+                <li><strong>Hidden Complexity:</strong> The terrible interaction methods are disguised as "advanced features"</li>
+                <li><strong>Broken Expectations:</strong> Users expect normal form behavior but get something completely different</li>
+                <li><strong>Accessibility Nightmare:</strong> These interactions would be impossible for many users</li>
+                <li><strong>Frustration by Design:</strong> Maximum user frustration achieved through legitimate-looking interfaces</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

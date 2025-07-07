@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Translator 3000</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: white;
+            color: black;
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 16px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid black;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        button:hover {
+            background: #f0f0f0;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            font-size: 16px;
+            margin: 20px 0;
+            min-height: 20px;
+        }
+        
+        .loading-container {
+            margin: 20px 0;
+        }
+        
+        .loading-bar {
+            width: 100%;
+            height: 20px;
+            border: 2px solid black;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .loading-fill {
+            height: 100%;
+            background: black;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .result {
+            font-size: 18px;
+            margin: 20px 0;
+            min-height: 25px;
+        }
+        
+        .listening {
+            color: #008000;
+        }
+        
+        .mic-indicator {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dog Translator 3000</h1>
+        <div class="status" id="status">ready to translate your dog</div>
+        <div class="mic-indicator" id="micIndicator">🎤</div>
+        <button id="startBtn" onclick="startListening()">start listening</button>
+        <button id="stopBtn" onclick="stopListening()" disabled>stop listening</button>
+        
+        <div class="loading-container">
+            <div class="loading-bar" id="loadingBar">
+                <div class="loading-fill" id="loadingFill"></div>
+            </div>
+            <div id="loadingText"></div>
+        </div>
+        
+        <div class="result" id="result"></div>
+        <button onclick="location.reload()" style="display: none;" id="resetBtn">translate again</button>
+    </div>
+
+    <script>
+        let audioContext;
+        let analyser;
+        let microphone;
+        let listening = false;
+        let noiseThreshold = 50; // Adjust this value to change sensitivity
+
+        async function startListening() {
+            try {
+                // Request microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // Set up audio context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                
+                analyser.fftSize = 256;
+                microphone.connect(analyser);
+                
+                listening = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('status').textContent = 'listening for your dog...';
+                document.getElementById('status').className = 'status listening';
+                document.getElementById('micIndicator').textContent = '🎤🔴';
+                
+                // Start monitoring audio levels
+                monitorAudio();
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                document.getElementById('status').textContent = 'microphone access denied (your dog is disappointed)';
+            }
+        }
+
+        function stopListening() {
+            listening = false;
+            if (audioContext) {
+                audioContext.close();
+            }
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('status').textContent = 'stopped listening';
+            document.getElementById('status').className = 'status';
+            document.getElementById('micIndicator').textContent = '🎤';
+        }
+
+        function monitorAudio() {
+            if (!listening) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function checkAudioLevel() {
+                if (!listening) return;
+                
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average volume
+                let sum = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    sum += dataArray[i];
+                }
+                const average = sum / bufferLength;
+                
+                // Check if noise spike detected
+                if (average > noiseThreshold) {
+                    noiseDetected();
+                    return;
+                }
+                
+                // Continue monitoring
+                requestAnimationFrame(checkAudioLevel);
+            }
+            
+            checkAudioLevel();
+        }
+
+        function noiseDetected() {
+            listening = false;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('status').textContent = 'noise detected! translating...';
+            document.getElementById('status').className = 'status';
+            document.getElementById('micIndicator').textContent = '🐕💬';
+            
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            startTranslation();
+        }
+
+        function startTranslation() {
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingFill = document.getElementById('loadingFill');
+            const loadingText = document.getElementById('loadingText');
+            
+            loadingBar.style.display = 'block';
+            loadingText.textContent = 'analyzing dog language patterns...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1.25; // 8 seconds total (100 / 1.25 = 80 intervals, 80 * 100ms = 8000ms)
+                loadingFill.style.width = progress + '%';
+                
+                // Update loading text
+                if (progress < 25) {
+                    loadingText.textContent = 'analyzing dog language patterns...';
+                } else if (progress < 50) {
+                    loadingText.textContent = 'cross-referencing with canine database...';
+                } else if (progress < 75) {
+                    loadingText.textContent = 'decoding emotional undertones...';
+                } else if (progress < 100) {
+                    loadingText.textContent = 'finalizing translation...';
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 100);
+        }
+
+        function showResult() {
+            const results = [
+                "your dog is saying they want a treat",
+                "translation: 'i would like a treat please'",
+                "your dog is requesting treats immediately",
+                "analysis complete: dog wants treats",
+                "translation: 'treat time! treat time!'",
+                "your dog is saying 'where are my treats?'",
+                "decoded message: 'human, provide treats now'",
+                "translation result: dog is asking for treats"
+            ];
+            
+            const randomResult = results[Math.floor(Math.random() * results.length)];
+            
+            document.getElementById('loadingBar').style.display = 'none';
+            document.getElementById('loadingText').textContent = '';
+            document.getElementById('result').textContent = randomResult;
+            document.getElementById('resetBtn').style.display = 'inline-block';
+            document.getElementById('status').textContent = 'translation complete';
+        }
+    </script>
+</body>
+</html> 

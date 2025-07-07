@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coin flipper</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .flip-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 2rem;
+        }
+
+        .flip-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .loading-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+
+        .progress-container {
+            width: 300px;
+            height: 20px;
+            background-color: #f0f0f0;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: black;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .flip-again-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .flip-again-btn:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="input-section">
+            <h1>coin flipper</h1>
+            <button id="flipBtn" class="flip-btn">flip coin</button>
+        </div>
+
+        <div id="loading-section" class="loading-section">
+            <div class="loading-text">flipping coin...</div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="result-section" class="result-section">
+            <div id="resultText" class="result-text"></div>
+            <button id="flipAgainBtn" class="flip-again-btn">flip again</button>
+        </div>
+    </div>
+
+    <script>
+        let isFlipping = false;
+
+        function startFlip() {
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            
+            // Hide input section
+            document.getElementById('input-section').style.display = 'none';
+            
+            // Show loading section
+            document.getElementById('loading-section').style.display = 'block';
+            
+            // Start progress bar animation
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            
+            const interval = setInterval(() => {
+                progress += 1.25; // 100% / 80 intervals = 1.25% per interval
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 100); // 100ms * 80 intervals = 8 seconds
+        }
+
+        function showResult() {
+            // Hide loading section
+            document.getElementById('loading-section').style.display = 'none';
+            
+            // Show result section
+            document.getElementById('result-section').style.display = 'block';
+            
+            // Randomly determine heads or tails
+            const result = Math.random() < 0.5 ? 'heads' : 'tails';
+            document.getElementById('resultText').textContent = result;
+            
+            isFlipping = false;
+        }
+
+        function reset() {
+            if (isFlipping) return;
+            
+            // Show input section
+            document.getElementById('input-section').style.display = 'block';
+            
+            // Hide other sections
+            document.getElementById('loading-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            
+            // Reset progress bar
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        // Event listeners
+        document.getElementById('flipBtn').addEventListener('click', startFlip);
+        document.getElementById('flipAgainBtn').addEventListener('click', reset);
+    </script>
+</body>
+</html> 

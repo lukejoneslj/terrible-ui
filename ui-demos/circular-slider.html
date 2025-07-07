@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Quantity Form</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        .quantity-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            text-align: center;
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+        .quantity-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .gesture-area {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gesture-area:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        .gesture-area.active {
+            border-color: #28a745;
+            background: #e8f5e8;
+        }
+        .gesture-instructions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .gesture-instructions strong {
+            display: block;
+            font-size: 16px;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        .mouse-trail {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #007bff;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.7;
+            animation: fadeOut 1s ease-out forwards;
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(0); }
+        }
+        .progress-indicator {
+            background: #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Product Order Form</h1>
+        
+        <div class="instructions">
+            <h3>Smart Quantity Selector</h3>
+            <p>Use the gesture area below to select your desired quantity. Move your mouse in circular motions to increment the quantity.</p>
+        </div>
+        
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input type="text" id="productName" value="Premium Widget" readonly style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 4px;">
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" class="quantity-input" value="0" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>Gesture Input Area</label>
+                <div class="gesture-area" id="gestureArea">
+                    <div class="gesture-instructions">
+                        <strong>Move mouse in circles</strong>
+                        Each complete circle adds 1 to quantity
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-indicator" id="progressIndicator">
+                Circles completed: 0 | Current progress: 0%
+            </div>
+            
+            <button type="submit" class="submit-btn">Add to Cart</button>
+        </form>
+    </div>
+
+    <script>
+        let mousePositions = [];
+        let currentQuantity = 0;
+        let circlesCompleted = 0;
+        let circleProgress = 0;
+        
+        const gestureArea = document.getElementById('gestureArea');
+        const quantityInput = document.getElementById('quantity');
+        const progressIndicator = document.getElementById('progressIndicator');
+        const orderForm = document.getElementById('orderForm');
+        
+        gestureArea.addEventListener('mousemove', handleMouseMove);
+        gestureArea.addEventListener('mouseenter', () => {
+            gestureArea.classList.add('active');
+        });
+        gestureArea.addEventListener('mouseleave', () => {
+            gestureArea.classList.remove('active');
+        });
+        
+        orderForm.addEventListener('submit', handleSubmit);
+        
+        function handleMouseMove(e) {
+            const rect = gestureArea.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Add mouse trail effect
+            createTrail(x, y);
+            
+            // Store mouse position
+            const position = { x, y, time: Date.now() };
+            mousePositions.push(position);
+            
+            // Keep only recent positions (last 2 seconds)
+            const cutoff = Date.now() - 2000;
+            mousePositions = mousePositions.filter(pos => pos.time > cutoff);
+            
+            // Check for circular motion
+            if (mousePositions.length > 15) {
+                checkForCircle();
+            }
+        }
+        
+        function createTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'mouse-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            gestureArea.appendChild(trail);
+            
+            // Remove trail after animation
+            setTimeout(() => {
+                if (trail.parentNode) {
+                    trail.parentNode.removeChild(trail);
+                }
+            }, 1000);
+        }
+        
+        function checkForCircle() {
+            if (mousePositions.length < 15) return;
+            
+            // Get recent positions for analysis
+            const recentPositions = mousePositions.slice(-15);
+            const centerX = recentPositions.reduce((sum, pos) => sum + pos.x, 0) / recentPositions.length;
+            const centerY = recentPositions.reduce((sum, pos) => sum + pos.y, 0) / recentPositions.length;
+            
+            // Calculate angles for each position relative to center
+            const angles = recentPositions.map(pos => {
+                return Math.atan2(pos.y - centerY, pos.x - centerX);
+            });
+            
+            // Check if we've made a complete rotation
+            let totalRotation = 0;
+            for (let i = 1; i < angles.length; i++) {
+                let diff = angles[i] - angles[i-1];
+                
+                // Normalize angle difference
+                if (diff > Math.PI) diff -= 2 * Math.PI;
+                if (diff < -Math.PI) diff += 2 * Math.PI;
+                
+                totalRotation += diff;
+            }
+            
+            // Update circle progress
+            circleProgress = Math.abs(totalRotation) / (2 * Math.PI);
+            
+            // If we've completed a circle, increment quantity
+            if (circleProgress >= 1) {
+                circlesCompleted++;
+                currentQuantity++;
+                
+                updateDisplay();
+                
+                // Clear positions to avoid double-counting
+                mousePositions = mousePositions.slice(-5);
+                circleProgress = 0;
+                
+                // Visual feedback
+                gestureArea.style.background = '#d4edda';
+                setTimeout(() => {
+                    gestureArea.style.background = '#e8f5e8';
+                }, 200);
+            }
+            
+            updateProgressDisplay();
+        }
+        
+        function updateDisplay() {
+            quantityInput.value = currentQuantity;
+        }
+        
+        function updateProgressDisplay() {
+            const progressPercent = Math.min(100, circleProgress * 100);
+            progressIndicator.textContent = `Circles completed: ${circlesCompleted} | Current progress: ${Math.round(progressPercent)}%`;
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (currentQuantity === 0) {
+                alert('Please select a quantity using the gesture area above.');
+                return;
+            }
+            
+            alert(`Order submitted!\nProduct: Premium Widget\nQuantity: ${currentQuantity}\nTotal circles made: ${circlesCompleted}`);
+        }
+        
+        // Prevent manual input
+        quantityInput.addEventListener('input', (e) => {
+            e.target.value = currentQuantity;
+        });
+    </script>
+</body>
+</html> 

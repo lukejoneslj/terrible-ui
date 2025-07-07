@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dice roller</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .dice-selector {
+            margin-bottom: 2rem;
+        }
+
+        .dice-selector label {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .dice-select {
+            padding: 0.5rem;
+            font-size: 1rem;
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 1rem;
+        }
+
+        .roll-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-bottom: 2rem;
+        }
+
+        .roll-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .loading-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+
+        .progress-container {
+            width: 300px;
+            height: 20px;
+            background-color: #f0f0f0;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: black;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .result-text {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: black;
+        }
+
+        .dice-info {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .roll-again-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #f0f0f0;
+            color: black;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .roll-again-btn:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="input-section">
+            <h1>dice roller</h1>
+            <div class="dice-selector">
+                <label for="diceType">choose your dice:</label>
+                <select id="diceType" class="dice-select">
+                    <option value="6">6-sided die (d6)</option>
+                    <option value="10">10-sided die (d10)</option>
+                    <option value="12">12-sided die (d12)</option>
+                    <option value="20">20-sided die (d20)</option>
+                    <option value="100">100-sided die (d100)</option>
+                </select>
+            </div>
+            <button id="rollBtn" class="roll-btn">roll dice</button>
+        </div>
+
+        <div id="loading-section" class="loading-section">
+            <div class="loading-text">simulating physics...</div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="result-section" class="result-section">
+            <div id="resultText" class="result-text"></div>
+            <div id="diceInfo" class="dice-info"></div>
+            <button id="rollAgainBtn" class="roll-again-btn">roll again</button>
+        </div>
+    </div>
+
+    <script>
+        let isRolling = false;
+
+        function startRoll() {
+            if (isRolling) return;
+            
+            isRolling = true;
+            
+            // Hide input section
+            document.getElementById('input-section').style.display = 'none';
+            
+            // Show loading section
+            document.getElementById('loading-section').style.display = 'block';
+            
+            // Start progress bar animation
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            
+            const interval = setInterval(() => {
+                progress += 1.25; // 100% / 80 intervals = 1.25% per interval
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 100); // 100ms * 80 intervals = 8 seconds
+        }
+
+        function showResult() {
+            // Hide loading section
+            document.getElementById('loading-section').style.display = 'none';
+            
+            // Show result section
+            document.getElementById('result-section').style.display = 'block';
+            
+            // Get selected dice type
+            const diceType = parseInt(document.getElementById('diceType').value);
+            
+            // Roll the dice (generate random number)
+            const result = Math.floor(Math.random() * diceType) + 1;
+            
+            // Display result
+            document.getElementById('resultText').textContent = result;
+            document.getElementById('diceInfo').textContent = `rolled a d${diceType}`;
+            
+            isRolling = false;
+        }
+
+        function reset() {
+            if (isRolling) return;
+            
+            // Show input section
+            document.getElementById('input-section').style.display = 'block';
+            
+            // Hide other sections
+            document.getElementById('loading-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            
+            // Reset progress bar
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        // Event listeners
+        document.getElementById('rollBtn').addEventListener('click', startRoll);
+        document.getElementById('rollAgainBtn').addEventListener('click', reset);
+    </script>
+</body>
+</html> 
